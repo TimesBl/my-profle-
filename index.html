@@ -1,0 +1,595 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timelyx - Python Developer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0033 0%, #2d0052 50%, #1a0033 100%);
+            color: #e0d4f7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a0033 0%, #2d0052 100%);
+            z-index: 1000;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .welcome-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .welcome-title {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #b794f6, #e879f9, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.5rem;
+            color: #c4b5fd;
+            cursor: pointer;
+            padding: 1rem 2rem;
+            border: 2px solid #a78bfa;
+            border-radius: 10px;
+            transition: all 0.3s;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .welcome-subtitle:hover {
+            background: #a78bfa;
+            color: #1a0033;
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .container.visible {
+            opacity: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #a78bfa;
+            margin: 0 auto 1.5rem;
+            display: block;
+            box-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #b794f6, #e879f9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #c4b5fd;
+            margin-bottom: 1rem;
+        }
+
+        .bio {
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .section {
+            margin: 3rem 0;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #a78bfa;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(167, 139, 250, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #e879f9;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #c4b5fd;
+            font-size: 0.9rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(167, 139, 250, 0.3);
+            border-color: #a78bfa;
+        }
+
+        .project-title {
+            font-size: 1.3rem;
+            color: #e879f9;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-desc {
+            color: #c4b5fd;
+            line-height: 1.6;
+        }
+
+        .add-project-btn {
+            background: linear-gradient(45deg, #a78bfa, #e879f9);
+            color: #1a0033;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .add-project-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .contact-section {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-btn {
+            background: rgba(167, 139, 250, 0.2);
+            border: 2px solid #a78bfa;
+            color: #e0d4f7;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .contact-btn:hover {
+            background: #a78bfa;
+            color: #1a0033;
+            transform: translateY(-3px);
+        }
+
+        .reviews-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .review-card {
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        .review-card:hover {
+            box-shadow: 0 5px 20px rgba(167, 139, 250, 0.2);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .review-author {
+            font-weight: bold;
+            color: #e879f9;
+        }
+
+        .review-rating {
+            color: #fbbf24;
+        }
+
+        .review-text {
+            color: #c4b5fd;
+            line-height: 1.6;
+        }
+
+        .review-date {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #9ca3af;
+            border-top: 1px solid rgba(167, 139, 250, 0.2);
+            margin-top: 4rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a0033 0%, #2d0052 100%);
+            border: 2px solid #a78bfa;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-content input, .modal-content textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid #a78bfa;
+            border-radius: 8px;
+            color: #e0d4f7;
+            font-family: inherit;
+        }
+
+        .modal-content button {
+            background: linear-gradient(45deg, #a78bfa, #e879f9);
+            color: #1a0033;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            margin-right: 0.5rem;
+        }
+
+        .close-modal {
+            background: rgba(167, 139, 250, 0.2) !important;
+            color: #e0d4f7 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <div class="welcome-screen" id="welcomeScreen">
+        <h1 class="welcome-title">Timelyx</h1>
+        <div class="welcome-subtitle" onclick="enterSite()">Привет! 👋</div>
+    </div>
+
+    <div class="container" id="mainContent">
+        <header>
+            <img src="https://i.pinimg.com/736x/15/16/25/151625c23e69e4f9ef351a4c749e0dff.jpg" alt="Timelyx Avatar" class="avatar" id="avatar">
+            <h1>Timelyx</h1>
+            <p class="subtitle">Python Developer</p>
+        </header>
+
+        <section class="bio">
+            <h2>Обо мне</h2>
+            <p style="text-align: center; line-height: 1.8;">
+                Привет! Я Timelyx - Разрабатываю Telegram-ботов на Python, постоянно изучаю новые технологии и совершенствую свои навыки программирования.
+            </p>
+        </section>
+
+        <section class="section">
+            <h2>Моя Статистика</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="yearsOfCoding">3</span>
+                    <span class="stat-label">Лет программирования</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="projectsCount">12</span>
+                    <span class="stat-label">Проектов</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="codingHours">2500+</span>
+                    <span class="stat-label">Часов кодинга</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="successfulWorks">25</span>
+                    <span class="stat-label">Успешных работ</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Мои Проекты</h2>
+            <div class="projects-grid" id="projectsGrid">
+                <div class="project-card">
+                    <div class="project-title">💻 My business card</div>
+                    <p class="project-desc">Мой сайт визитка для ознакомления с моей деятельностью.</p>
+                </div>
+                <div class="project-card">
+                    <div class="project-title">📊 Telegram bot reviews</div>
+                    <p class="project-desc">Бот пре днозначеный для ваших отзывов о моей роботе.</p>
+                </div>
+                <div class="project-card">
+                    <div class="project-title">🌐 Bot Editor mp3 </div>
+                    <p class="project-desc">Упрощает редактирование mp3 файлов для вас</p>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <button class="add-project-btn" onclick="openProjectModal()">+ Добавить проект</button>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Связаться со мной</h2>
+            <div class="contact-section">
+                <a href="https://t.me/YOUR_TELEGRAM" class="contact-btn" target="_blank">
+                    📱 Telegram
+                </a>
+                <a href="https://github.com/YOUR_GITHUB" class="contact-btn" target="_blank">
+                    💻 GitHub
+                </a>
+                <a href="mailto:your@email.com" class="contact-btn">
+                    ✉️ Email
+                </a>
+                <a href="#" class="contact-btn" onclick="openReviewBot()">
+                    ⭐ Оставить отзыв
+                </a>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Отзывы</h2>
+            <div class="reviews-container" id="reviewsContainer">
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-author">test2</span>
+                        <span class="review-rating">⭐⭐⭐⭐⭐</span>
+                    </div>
+                    <p class="review-text">test2com</p>
+                    <p class="review-date">15 октября 2025</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-author">test</span>
+                        <span class="review-rating">⭐</span>
+                    </div>
+                    <p class="review-text">testcom</p>
+                    <p class="review-date">10 октября 2025</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 Timelyx. Все права защищены.</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <h2 style="color: #a78bfa; margin-bottom: 1rem;">Добавить проект</h2>
+            <input type="text" id="projectTitle" placeholder="Название проекта">
+            <textarea id="projectDesc" rows="4" placeholder="Описание проекта"></textarea>
+            <button onclick="addProject()">Добавить</button>
+            <button class="close-modal" onclick="closeProjectModal()">Отмена</button>
+        </div>
+    </div>
+
+    <script>
+        // Создание звёзд
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function enterSite() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('mainContent').classList.add('visible');
+        }
+
+        function openProjectModal() {
+            document.getElementById('projectModal').style.display = 'flex';
+        }
+
+        function closeProjectModal() {
+            document.getElementById('projectModal').style.display = 'none';
+        }
+
+        function addProject() {
+            const title = document.getElementById('projectTitle').value;
+            const desc = document.getElementById('projectDesc').value;
+            
+            if (title && desc) {
+                const projectsGrid = document.getElementById('projectsGrid');
+                const projectCard = document.createElement('div');
+                projectCard.className = 'project-card';
+                projectCard.innerHTML = `
+                    <div class="project-title">🚀 ${title}</div>
+                    <p class="project-desc">${desc}</p>
+                `;
+                projectsGrid.appendChild(projectCard);
+                
+                document.getElementById('projectTitle').value = '';
+                document.getElementById('projectDesc').value = '';
+                closeProjectModal();
+                
+                // Увеличиваем счётчик проектов
+                const projectsCount = document.getElementById('projectsCount');
+                projectsCount.textContent = parseInt(projectsCount.textContent) + 1;
+            }
+        }
+
+        function openReviewBot() {
+            alert('Откройте Telegram бота: @YOUR_BOT_USERNAME\nИли используйте ссылку: https://t.me/YOUR_BOT_USERNAME');
+        }
+
+        // Функция для загрузки отзывов с сервера
+        async function loadReviews() {
+            try {
+                const response = await fetch('http://localhost:5000/api/reviews');
+                const reviews = await response.json();
+                
+                const container = document.getElementById('reviewsContainer');
+                container.innerHTML = '';
+                
+                reviews.forEach(review => {
+                    const stars = '⭐'.repeat(review.rating);
+                    const reviewCard = document.createElement('div');
+                    reviewCard.className = 'review-card';
+                    reviewCard.innerHTML = `
+                        <div class="review-header">
+                            <span class="review-author">${review.author}</span>
+                            <span class="review-rating">${stars}</span>
+                        </div>
+                        <p class="review-text">${review.text}</p>
+                        <p class="review-date">${new Date(review.date).toLocaleDateString('ru-RU')}</p>
+                    `;
+                    container.appendChild(reviewCard);
+                });
+            } catch (error) {
+                console.log('Сервер не запущен. Используются тестовые отзывы.');
+            }
+        }
+
+        // Инициализация
+        createStars();
+        loadReviews();
+        
+        // Обновление отзывов каждые 30 секунд
+        setInterval(loadReviews, 30000);
+    </script>
+</body>
+</html>
